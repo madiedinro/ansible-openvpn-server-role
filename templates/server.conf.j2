@@ -1,0 +1,58 @@
+# {{ ansible_managed }}
+
+port {{ openvpn_port }}
+proto {{ openvpn_proto }}
+cipher {{ openvpn_cipher }}
+dev {{ openvpn_dev }}
+ca {{openvpn_keydir}}/ca.crt
+cert {{openvpn_keydir}}/server.crt
+key {{openvpn_keydir}}/server.key
+dh {{openvpn_keydir}}/dh{{openvpn_key_size}}.pem
+
+
+tls-auth {{ openvpn_keydir }}/{{ openvpn_tls_key }} 0
+tls-server
+client-config-dir {{ openvpn_client_config_dir }}
+
+{% if openvpn_topology is defined -%}
+topology {{ openvpn_topology }}
+{% endif %}
+
+{% if openvpn_server and not openvpn_bridge %}
+server {{ openvpn_server }}
+{% endif %}
+{% if openvpn_bridge %}
+server-bridge {{ openvpn_bridge.address }} {{ openvpn_bridge.netmask }} {{ openvpn_bridge.dhcp_start }} {{ openvpn_bridge.dhcp_end }}
+{% endif %}
+
+ifconfig-pool-persist {{openvpn_ifconfig_pool_persist}}
+keepalive {{ openvpn_keepalive }}
+
+{% if openvpn_comp_lzo -%}
+comp-lzo
+{% endif %}
+
+persist-key
+persist-tun
+
+status {{openvpn_status}}
+log-append  {{openvpn_log}}
+verb {{openvpn_verb}}
+max-clients {{openvpn_max_clients}}
+user {{openvpn_user}}
+
+push "redirect-gateway def1"
+push "dhcp-option DNS 77.88.8.8"
+push "dhcp-option DNS 77.88.8.1"
+
+{% if openvpn_group -%}
+group {{openvpn_group}}
+{% else -%}
+group nogroup
+{% endif %}
+{% for option in openvpn_server_options %}
+{{option}}
+{% endfor %}
+{% if crl_pem_file.stat.exists %}
+crl-verify {{openvpn_keydir}}/crl.pem
+{% endif %}

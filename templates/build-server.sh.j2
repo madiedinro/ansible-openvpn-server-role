@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# {{ ansible_managed }}
+
+. {{openvpn_etcdir}}/vars
+
+# Prepare keys directory
+[ -d "$KEY_DIR" ] || {
+
+    mkdir "$KEY_DIR" && \
+    chmod go-rwx "$KEY_DIR" && \
+    touch "$KEY_DIR/index.txt" && \
+    echo 01 >"$KEY_DIR/serial"
+
+}
+
+$EASY_RSA/pkitool --initca && \
+$EASY_RSA/pkitool --server server && \
+$OPENSSL dhparam -out ${KEY_DIR}/dh${KEY_SIZE}.pem ${KEY_SIZE}
+
+{% for vpn_id in range(1, openvpn_clients|int+1) %}
+$EASY_RSA/pkitool {{openvpn_client_prefix}}{{ vpn_id }}
+{% endfor %}

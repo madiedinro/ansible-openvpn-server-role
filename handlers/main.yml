@@ -1,0 +1,8 @@
+---
+
+- name: openvpn restart
+  systemd:
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+    name: '{{openvpn_service}}'

@@ -1,0 +1,51 @@
+---
+openvpn_version: 2.4
+
+openvpn_etcdir: /etc/openvpn
+openvpn_keydir: "{{openvpn_etcdir}}/keys"
+openvpn_client_config_dir: "{{openvpn_etcdir}}/ccd"
+
+# Default settings (See OpenVPN documentation)
+openvpn_host: "{{ansible_host}}"              # The server address
+openvpn_port: 8080
+openvpn_proto: tcp
+openvpn_dev: tun
+openvpn_clients_net: 192.168.253.0/24
+openvpn_server: '{{openvpn_clients_net|ipaddr("network")}} {{openvpn_clients_net|ipaddr("netmask")}}'
+openvpn_bridge: {}
+openvpn_max_clients: 100
+openvpn_log: /var/log/openvpn.log                   # Log's directory
+openvpn_keepalive: "10 60"
+openvpn_ifconfig_pool_persist: ipp.txt
+openvpn_comp_lzo: yes                               # Enable compression
+openvpn_cipher: BF-CBC                              # Encryption algorithm
+openvpn_status: openvpn-status.log
+openvpn_verb: 3
+openvpn_tls_auth: True                            # Enable perfect forward secracyxy
+openvpn_tls_key: "ta.key"
+openvpn_resolv_retry: infinite
+openvpn_server_options: []                          # Additional server options
+                                                    # openvpn_server_options:
+                                                    # - dev-node MyTap
+                                                    # - client-to-client
+openvpn_client_options: []                          # Additional client options
+                                                    # openvpn_client_options:
+                                                    # - dev-node MyTap
+                                                    # - client-to-client
+
+openvpn_key_size: 1024
+
+openvpn_users_revoke: []
+openvpn_unified_client_profiles: yes
+openvpn_service: openvpn@server
+openvpn_user: openvpn
+openvpn_group: openvpn
+
+openvpn_client_prefix: user
+openvpn_clients: 1
+
+openvpn_key_country: RU
+openvpn_key_province: MOS
+openvpn_key_city: MOSCOW
+openvpn_key_org: Unknown
+openvpn_key_email: hello@example.com

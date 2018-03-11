@@ -1,0 +1,30 @@
+- set_fact:
+    client_ip: '{{openvpn_clients_net|ipaddr(vpn_id|int * 4 + 1)|ipaddr("address")}}'
+    client_server: '{{openvpn_clients_net|ipaddr(vpn_id|int * 4 + 2)|ipaddr("address")}}'
+    client_name: '{{openvpn_client_prefix}}{{vpn_id}}'
+
+- name: Setting user params
+  shell: "tee {{ openvpn_client_config_dir }}/{{client_name}}"
+  args:
+    stdin: 'ifconfig-push {{client_ip}} {{client_server}}'
+    creates: '{{ openvpn_client_config_dir }}/{{client_name}}'
+
+- name: Read client cert files.
+  command: "sed -n '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' {{ openvpn_keydir }}/{{client_name}}.crt"
+  no_log: true
+  changed_when: false
+  register: openvpn_read_client_cert_files_result
+
+- name: Read client key files.
+  command: "cat {{ openvpn_etcdir }}/keys/{{client_name}}.key"
+  no_log: true
+  changed_when: false
+  register: openvpn_read_client_key_files_result
+
+- set_fact:
+    openvpn_client_cert_output: "{{ openvpn_read_client_cert_files_result.stdout }}"
+    openvpn_client_key_output: "{{ openvpn_read_client_key_files_result.stdout }}"
+
+- name: Generating and saving clients conf
+  template: src=client.conf.j2 dest={{openvpn_keydir}}/{{client_name}}.ovpn
+
