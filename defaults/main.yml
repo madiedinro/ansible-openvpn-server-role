@@ -49,3 +49,9 @@ openvpn_key_province: MOS
 openvpn_key_city: MOSCOW
 openvpn_key_org: Unknown
 openvpn_key_email: hello@example.com
+
+
+openvpn_push: []
+#- redirect-gateway def1
+#- dhcp-option DNS 77.88.8.8
+#- dhcp-option DNS 77.88.8.1

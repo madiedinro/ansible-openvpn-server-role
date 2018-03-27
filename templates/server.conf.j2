@@ -41,9 +41,9 @@ verb {{openvpn_verb}}
 max-clients {{openvpn_max_clients}}
 user {{openvpn_user}}
 
-push "redirect-gateway def1"
-push "dhcp-option DNS 77.88.8.8"
-push "dhcp-option DNS 77.88.8.1"
+{% for p in openvpn_push %}
+  push "{{p}}"
+{% endfor %}
 
 {% if openvpn_group -%}
 group {{openvpn_group}}

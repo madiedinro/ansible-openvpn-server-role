@@ -1,7 +1,7 @@
 - set_fact:
-    client_ip: '{{openvpn_clients_net|ipaddr(vpn_id|int * 4 + 1)|ipaddr("address")}}'
-    client_server: '{{openvpn_clients_net|ipaddr(vpn_id|int * 4 + 2)|ipaddr("address")}}'
-    client_name: '{{openvpn_client_prefix}}{{vpn_id}}'
+    client_ip: '{{openvpn_clients_net|ipaddr(item.vpn_id|int * 4 + 1)|ipaddr("address")}}'
+    client_server: '{{openvpn_clients_net|ipaddr(item.vpn_id|int * 4 + 2)|ipaddr("address")}}'
+    client_name: '{{openvpn_client_prefix}}{{item.vpn_id}}'
 
 - name: Setting user params
   shell: "tee {{ openvpn_client_config_dir }}/{{client_name}}"

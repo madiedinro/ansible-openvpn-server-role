@@ -66,13 +66,22 @@
     mode=755
     state=directory
 
-- name: Generate Clients keys
-  command: "{{openvpn_etcdir}}/build-client.sh {{openvpn_client_prefix}}{{vpn_id}}"
-  args:
-    creates: "{{ openvpn_keydir }}/{{openvpn_client_prefix}}{{vpn_id}}.crt"
+- name: Checking certs
+  stat:
+    path: "{{ openvpn_keydir }}/{{openvpn_client_prefix}}{{vpn_id}}.ovpn"
+  register: keys_ex
   with_sequence: start=1 count={{openvpn_clients}}
   loop_control:
     loop_var: vpn_id
+  tags: ['users']
+
+- name: Generate Clients keys
+  command: "{{openvpn_etcdir}}/build-client.sh {{openvpn_client_prefix}}{{item.vpn_id}}"
+  args:
+    creates: "{{ openvpn_keydir }}/{{openvpn_client_prefix}}{{item.vpn_id}}.crt"
+  when: not item.stat.exists
+  with_items: '{{keys_ex.results}}'
+  no_log: True
   tags: ['users']
 
 
@@ -88,9 +97,9 @@
 
 - name: Generating users configuration
   include_tasks: user.yml
-  with_sequence: start=1 count={{openvpn_clients}}
-  loop_control:
-    loop_var: vpn_id
+  with_items: '{{keys_ex.results}}'
+  when: not item.stat.exists
+  no_log: True
   tags: ['users']
 
 - name: Configure server
