@@ -19,7 +19,10 @@
 
 
 - name: Generate scripts from templates
-  template: src={{item}}.j2 dest={{openvpn_etcdir}}/{{item}} mode=0700
+  template: 
+    src: {{item}}.j2 
+    dest: '{{openvpn_etcdir}}/{{item}}'
+    mode: 0700
   with_items: [vars, build-server.sh, build-client.sh, revoke-client.sh]
 
 
@@ -103,7 +106,10 @@
   tags: ['users']
 
 - name: Configure server
-  template: src=server.conf.j2 dest={{openvpn_etcdir}}/server.conf
+  template: 
+    src: server.conf.j2 
+    dest: '{{openvpn_etcdir}}/server.conf'
+    force: yes
   notify: [openvpn restart]
 
 

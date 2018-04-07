@@ -26,5 +26,8 @@
     openvpn_client_key_output: "{{ openvpn_read_client_key_files_result.stdout }}"
 
 - name: Generating and saving clients conf
-  template: src=client.conf.j2 dest={{openvpn_keydir}}/{{client_name}}.ovpn
+  template: 
+    src: client.conf.j2 
+    dest: '{{openvpn_keydir}}/{{client_name}}.ovpn'
+    force: yes
 
