@@ -29,8 +29,14 @@ ifconfig-pool-persist {{openvpn_ifconfig_pool_persist}}
 keepalive {{ openvpn_keepalive }}
 
 {% if openvpn_comp_lzo -%}
-comp-lzo
+compress lzo
 {% endif %}
+
+{% if openvpn_comp_lz4 -%}
+compress lz4
+{% endif %}
+
+
 
 persist-key
 persist-tun
