@@ -28,12 +28,12 @@ server-bridge {{ openvpn_bridge.address }} {{ openvpn_bridge.netmask }} {{ openv
 ifconfig-pool-persist {{openvpn_ifconfig_pool_persist}}
 keepalive {{ openvpn_keepalive }}
 
+{% if openvpn_comp_lz4 -%}
+compress lz4
+{% else %}
 {% if openvpn_comp_lzo -%}
 compress lzo
 {% endif %}
-
-{% if openvpn_comp_lz4 -%}
-compress lz4
 {% endif %}
 
 

@@ -8,11 +8,12 @@ nobind
 persist-key
 persist-tun
 remote-cert-tls server
+{% if openvpn_comp_lz4 -%}
+compress lz4
+{% else %}
 {% if openvpn_comp_lzo -%}
 compress lzo
 {% endif %}
-{% if openvpn_comp_lz4 -%}
-compress lz4
 {% endif %}
 verb {{openvpn_verb}}
 {% for option in openvpn_client_options %}
